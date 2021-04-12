@@ -24,7 +24,7 @@ function load() {
             meetings = (data.match(/meetingID/g) || []).length / 2;
             users = (data.match(/userID/g) || []).length / 2;
     });
-    fetch("https://api.hetzner.cloud/v1/servers?label_selector=bbb",
+    fetch("https://api.hetzner.cloud/v1/servers?label_selector=bbb&status=running",
         {'headers':
                 {'Authorization': 'Bearer ' + hetznerToken}
         }
