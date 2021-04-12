@@ -69,6 +69,18 @@ app.post('/', (req, res) => {
     renderPage(res);
 })
 
+app.post('/refresh', (req, res) => {
+    if (req.header("Authorization") === "Bearer " + statusToken) {
+        load();
+    }
+    res.redirect("/");
+})
+
+//404
+app.get('*', (req, res) => res.redirect("/"));
+
+app.post('*', (req, res) => res.redirect("/"));
+
 app.listen(port, () => {
     console.log(`App listening at http://localhost:${port}`)
 })
