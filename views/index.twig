@@ -1,0 +1,61 @@
+<html>
+<head>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.2/css/bulma.min.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>BBB Status</title>
+</head>
+<body>
+<section class="section">
+    <h1 class="title">
+        BBB Status
+    </h1>
+    {% for alert in alerts %}
+        <div class="notification is-danger">
+            <b>{{ alert.time }}:</b><br>
+            <p>{{ alert.status }}</p>
+        </div>
+    {% endfor %}
+    <div class="container">
+        <table style="width: 100%">
+            <tr>
+                <th><h1 class="identifier">Server</h1></th>
+                <th><h1 class="identifier">Meetings</h1></th>
+                <th><h1 class="identifier">User</h1></th>
+            </tr>
+            <tr>
+                <td><h3 class="stat">{{ servers }}</h3></td>
+                <td><h3 class="stat">{{ meetings }}</h3></td>
+                <td><h3 class="stat">{{ users }}</h3></td>
+            </tr>
+        </table>
+    </div>
+    <div class="container">
+        <table style="width: 100%">
+            <tr>
+                <th><h1 class="identifier">CPU</h1></th>
+            </tr>
+            <tr>
+                <td><h3 class="stat">{{ cpu }}%</h3></td>
+            </tr>
+        </table>
+    </div>
+</section>
+</body>
+<style>
+    .title {
+        font-size: 4rem;
+    }
+    .identifier {
+        font-size: 3rem;
+    }
+    .stat {
+        font-size: 10rem;
+    }
+    .container {
+        margin-bottom: 5rem;
+    }
+    .notification {
+        margin: 2rem;
+    }
+</style>
+</html>
