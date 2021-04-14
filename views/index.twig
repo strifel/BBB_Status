@@ -20,29 +20,24 @@
             <p>{{ issue.status }}</p>
         </div>
     {% endfor %}
-    <div class="container">
-        <table style="width: 100%">
-            <tr>
-                <th><h1 class="identifier">Server</h1></th>
-                <th><h1 class="identifier">Meetings</h1></th>
-                <th><h1 class="identifier">User</h1></th>
-            </tr>
-            <tr>
-                <td><h3 class="stat">{{ servers }}</h3></td>
-                <td><h3 class="stat">{{ meetings }}</h3></td>
-                <td><h3 class="stat">{{ users }}</h3></td>
-            </tr>
-        </table>
-    </div>
-    <div class="container">
-        <table style="width: 100%">
-            <tr>
-                <th><h1 class="identifier">CPU</h1></th>
-            </tr>
-            <tr>
-                <td><h3 class="stat">{{ cpu }}%</h3></td>
-            </tr>
-        </table>
+    <div class="columns has-text-centered">
+        <div class="column">
+            <h1 class="identifier">Server</h1>
+            <h3 class="stat">{{ servers }}</h3>
+        </div>
+        <div class="column">
+            <h1 class="identifier">Meetings</h1>
+            <h3 class="stat">{{ meetings }}</h3>
+        </div>
+        <div class="column">
+            <h1 class="identifier">User</h1>
+            <h3 class="stat">{{ users }}</h3>
+        </div>
+        <div class="column">
+            <h1 class="identifier">CPU</h1>
+            <h3 class="stat">{{ cpu }}%</h3>
+        </div>
+
     </div>
 </section>
 </body>
