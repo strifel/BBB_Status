@@ -88,7 +88,11 @@ app.post('/refresh', (req, res) => {
 app.post('/zulip', (req, res) => {
    if (zulipToken && req.body && req.body.token && req.body.token === zulipToken) {
        let content = req.body.message.content.replace("@**BBB Status**", "");
-       issues.push({status: content, time: new Date().toLocaleTimeString()});
+       if (content === "clear") {
+           issues = [];
+       } else {
+           issues.push({status: content, time: new Date().toLocaleTimeString()});
+       }
        res.json({
            "response_not_required": true
        })
