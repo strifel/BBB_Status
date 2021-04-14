@@ -10,6 +10,7 @@ const port = process.env.BS_PORT || 3000
 const userUrl = process.env.BS_USER_URL
 const hetznerToken = process.env.BS_HETZNER_TOKEN;
 const statusToken = process.env.BS_STATUS_TOKEN;
+const zulipToken = process.env.BS_ZULIP_TOKEN;
 const highCPUAlert = process.env.BS_HIGH_CPU_ALERT || "{{server}} has a high CPU usage. If you experience problems on it, try recreating your Meeting.";
 
 let users = 0;
@@ -83,6 +84,14 @@ app.post('/refresh', (req, res) => {
     }
     res.redirect("/");
 })
+
+app.post('/zulip', (req, res) => {
+   if (zulipToken && req.body && req.body.token && req.body.token === zulipToken) {
+       let content = req.body.message.content.replace("@**BBB Status**", "");
+       issues.push({status: content, time: new Date().toLocaleTimeString()});
+   }
+   res.redirect("/");
+});
 
 //404
 app.get('*', (req, res) => res.redirect("/"));
