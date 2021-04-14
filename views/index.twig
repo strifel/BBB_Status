@@ -10,9 +10,14 @@
         BBB Status
     </h1>
     {% for alert in alerts %}
+        <div class="notification is-warning">
+            <p>{{ alert }}</p>
+        </div>
+    {% endfor %}
+    {% for issue in issues %}
         <div class="notification is-danger">
-            <b>{{ alert.time }}:</b><br>
-            <p>{{ alert.status }}</p>
+            <b>{{ issue.time }}:</b><br>
+            <p>{{ issue.status }}</p>
         </div>
     {% endfor %}
     <div class="container">

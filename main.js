@@ -10,12 +10,14 @@ const port = process.env.BS_PORT || 3000
 const userUrl = process.env.BS_USER_URL
 const hetznerToken = process.env.BS_HETZNER_TOKEN;
 const statusToken = process.env.BS_STATUS_TOKEN;
+const highCPUAlert = process.env.BS_HIGH_CPU_ALERT || "{{server}} has a high CPU usage. If you experience problems on it, try recreating your Meeting.";
 
 let users = 0;
 let meetings = 0;
 let serverCount = 0;
 let cpu = 0.0;
 let issues = [];
+let alerts = [];
 
 function load() {
     fetch(userUrl)
@@ -31,13 +33,18 @@ function load() {
     ).then(res => res.json()).then((data) => {
         serverCount = 0;
         cpu = 0;
+        alerts = [];
         data['servers'].forEach((d) => {
             serverCount++;
             fetch('https://api.hetzner.cloud/v1/servers/' + d.id + '/metrics?type=cpu&start=' + new Date().toISOString() + '&end=' + new Date().toISOString(),
                 {'headers':
                         {'Authorization': 'Bearer ' + hetznerToken}
                 }).then(res => res.json()).then((data) => {
-                    cpu += data.metrics.time_series.cpu.values[0][1];
+                    let serverCPU = data.metrics.time_series.cpu.values[0][1];
+                    cpu = parseFloat(cpu) + parseFloat(serverCPU);
+                    if (serverCPU > 700) {
+                        alerts.push(highCPUAlert.replace("{{server}}", d.name))
+                    }
             });
         });
     });
@@ -49,7 +56,8 @@ function renderPage(res) {
         users: users,
         meetings: meetings,
         servers: serverCount,
-        alerts: issues,
+        issues: issues,
+        alerts: alerts,
         cpu: (parseFloat(cpu) / (serverCount * 8)).toFixed(0)
     });
 }
