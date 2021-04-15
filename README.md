@@ -16,5 +16,5 @@ All server have to have the tag bbb.
 The status token should be a random generated token.
 ## Add a status
 ```
-curl -X POST -H "Authorization: Bearer YOUR_STATUS_TOKEN" -H "Content-Type: application/json" --data '{"status": "Youre status message!"}' http://localhost:3000
+curl -X POST -H "Authorization: Bearer YOUR_STATUS_TOKEN" -H "Content-Type: application/json" --data '{"status": "Youre status message!"}' http://localhost:3000/api/issues
 ```

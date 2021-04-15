@@ -67,7 +67,7 @@ app.get('/', (req, res) => {
     renderPage(res);
 })
 
-app.post('/', (req, res) => {
+app.post('/api/issues', (req, res) => {
     if (req.header("Authorization") === "Bearer " + statusToken) {
         if ('status' in req.body) {
             issues.push({status: req.body.status, time: new Date().toLocaleTimeString()});
@@ -78,7 +78,7 @@ app.post('/', (req, res) => {
     renderPage(res);
 })
 
-app.post('/refresh', (req, res) => {
+app.post('/api/refresh', (req, res) => {
     if (req.header("Authorization") === "Bearer " + statusToken) {
         load();
     }
