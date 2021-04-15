@@ -1,22 +1,27 @@
 const express = require('express')
 const fetch = require('node-fetch');
 const Twig = require("twig")
+const sanitizer = require('sanitize')();
+
 require('dotenv').config()
 
 const app = express();
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
 const port = process.env.BS_PORT || 3000
 const userUrl = process.env.BS_USER_URL
 const hetznerToken = process.env.BS_HETZNER_TOKEN;
 const statusToken = process.env.BS_STATUS_TOKEN;
 const zulipToken = process.env.BS_ZULIP_TOKEN;
+const slackIssueURI = process.env.BS_SLACK_ISSUE_URL;
 const highCPUAlert = process.env.BS_HIGH_CPU_ALERT || "{{server}} has a high CPU usage. If you experience problems on it, try recreating your Meeting.";
+const language = process.env.BS_LANGUAGE ? JSON.parse(process.env.BS_LANGUAGE) : {"report": "Report issue", "issue": "issue", "cancel": "cancel", "submit": "submit"};
 
 let users = 0;
 let meetings = 0;
-let serverCount = 0;
 let cpu = 0.0;
+let servers = [];
 let issues = [];
 let alerts = [];
 
@@ -32,11 +37,11 @@ function load() {
                 {'Authorization': 'Bearer ' + hetznerToken}
         }
     ).then(res => res.json()).then((data) => {
-        serverCount = 0;
+        servers = [];
         cpu = 0;
         alerts = [];
         data['servers'].forEach((d) => {
-            serverCount++;
+            servers.push(d);
             fetch('https://api.hetzner.cloud/v1/servers/' + d.id + '/metrics?type=cpu&start=' + new Date().toISOString() + '&end=' + new Date().toISOString(),
                 {'headers':
                         {'Authorization': 'Bearer ' + hetznerToken}
@@ -56,16 +61,32 @@ function renderPage(res) {
     res.render('index.twig', {
         users: users,
         meetings: meetings,
-        servers: serverCount,
+        servers: servers.map((d) => d.name),
+        serverCount: servers.length,
         issues: issues,
         alerts: alerts,
-        cpu: (parseFloat(cpu) / (serverCount * 8)).toFixed(0)
+        cpu: (parseFloat(cpu) / (servers.length * 8)).toFixed(0),
+        language: language
     });
 }
 
 app.get('/', (req, res) => {
     renderPage(res);
 })
+
+app.post('/', (req, res) => {
+    if ('server' in req.body && 'error' in req.body) {
+        let server = sanitizer.primitives(req.body.server);
+        server = Object.values(server).join('').replace("```", "");
+        let error = sanitizer.primitives(req.body.error);
+        error = Object.values(error).join('').replace("```", "");
+        fetch(slackIssueURI, {
+            'method': 'POST',
+            'body': JSON.stringify({'text': "```\n" + server + ": " + error + "\n```"})
+        })
+    }
+    renderPage(res);
+});
 
 app.post('/api/issues', (req, res) => {
     if (req.header("Authorization") === "Bearer " + statusToken) {

@@ -6,9 +6,50 @@
 </head>
 <body>
 <section class="section">
-    <h1 class="title">
-        BBB Status
-    </h1>
+    <div class="columns">
+        <div class="column is-one-quarter">
+            <h1 class="title">
+                BBB Status
+            </h1>
+        </div>
+        <div class="column">
+            <button class="button is-danger" onclick="this.parentElement.getElementsByClassName('modal')[0].classList.add('is-active')">{{ language.report }}</button>
+            <div class="modal">
+                <div class="modal-background" style="background-color: white"></div>
+                <div class="modal-content">
+                    <form method="post">
+                        <div class="field">
+                            <label class="label">Server</label>
+                            <div class="control">
+                                <div class="select">
+                                    <select name="server">
+                                        {% for server in servers %}
+                                            <option>{{ server }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="field">
+                            <label class="label">{{ language.issue }}</label>
+                            <div class="control">
+                                <textarea name="error" class="textarea" placeholder="Textarea"></textarea>
+                            </div>
+                        </div>
+                        <div class="field is-grouped">
+                            <div class="control">
+                                <button class="button is-link" type="submit">{{ language.submit }}</button>
+                            </div>
+                            <div class="control">
+                                <button class="button is-link is-light" onclick="this.parentElement.parentElement.classList.remove('is-active')">{{ language.cancel }}</button>
+                            </div>
+                        </div>
+                        <button class="modal-close is-large">{{ language.cancel }}</button>
+                </div>
+                    </form>
+            </div>
+        </div>
+    </div>
     {% for alert in alerts %}
         <div class="notification is-warning">
             <p>{{ alert }}</p>
@@ -23,7 +64,7 @@
     <div class="columns has-text-centered">
         <div class="column">
             <h1 class="identifier">Server</h1>
-            <h3 class="stat">{{ servers }}</h3>
+            <h3 class="stat">{{ serverCount }}</h3>
         </div>
         <div class="column">
             <h1 class="identifier">Meetings</h1>
