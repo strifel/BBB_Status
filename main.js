@@ -75,7 +75,7 @@ app.post('/api/issues', (req, res) => {
             issues = [];
         }
     }
-    renderPage(res);
+    res.redirect("/");
 })
 
 app.post('/api/refresh', (req, res) => {
