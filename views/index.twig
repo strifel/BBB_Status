@@ -41,12 +41,12 @@
                                 <button class="button is-link" type="submit">{{ language.submit }}</button>
                             </div>
                             <div class="control">
-                                <button class="button is-link is-light" onclick="this.parentElement.parentElement.classList.remove('is-active')">{{ language.cancel }}</button>
+                                <button class="button is-link is-light" type="button" onclick="this.parentElement.parentElement.parentElement.parentElement.parentElement.classList.remove('is-active')">{{ language.cancel }}</button>
                             </div>
                         </div>
                         <button class="modal-close is-large">{{ language.cancel }}</button>
-                </div>
                     </form>
+                </div>
             </div>
         </div>
     </div>
