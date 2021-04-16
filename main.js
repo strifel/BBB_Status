@@ -58,10 +58,14 @@ function load() {
             });
             // Yes I do know setTimeout is far from optimal to use here! But I will just put a
             //TODO here and never think of it again!
-            setTimeout(() => wss.clients.forEach((client) => client.send(JSON.stringify(getData()))), 5000);
+            setTimeout(() => sendWS(), 5000);
         });
     });
 
+}
+
+function sendWS() {
+    wss.clients.forEach((client) => client.send(JSON.stringify(getData())));
 }
 
 function renderPage(res) {
@@ -122,6 +126,7 @@ app.post('/zulip', (req, res) => {
        let content = req.body.message.content.replace("@**BBB Status**", "");
        if (content === "clear" || content === " clear") {
            issues = [];
+           sendWS();
            res.json({
                "content": "Cleared"
            });
@@ -132,6 +137,7 @@ app.post('/zulip', (req, res) => {
            });
        } else {
            issues.push({status: content, time: new Date().toLocaleTimeString()});
+           sendWS();
            res.json({
                "content": "+ " + content
            });
