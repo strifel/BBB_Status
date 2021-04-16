@@ -103,7 +103,7 @@
 window.socket = new WebSocket(((window.location.protocol === "https:") ? "wss://" : "ws://") + window.location.host + "/websocket");
 window.socket.onmessage = (event) => {
     if (!document.getElementsByClassName("modal")[0].classList.contains("is-active")) {
-        location.reload();
+        window.location = window.location.href;
     }
 }
 </script>
