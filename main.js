@@ -2,10 +2,14 @@ const express = require('express')
 const fetch = require('node-fetch');
 const Twig = require("twig")
 const sanitizer = require('sanitize')();
+const WebSocketServer = require("ws").Server;
+const http = require("http");
 
 require('dotenv').config()
 
 const app = express();
+const server = http.createServer(app)
+const wss = new WebSocketServer({server: server, path: "/websocket"});
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
@@ -52,13 +56,20 @@ function load() {
                         alerts.push(highCPUAlert.replace("{{server}}", d.name))
                     }
             });
+            // Yes I do know setTimeout is far from optimal to use here! But I will just put a
+            //TODO here and never think of it again!
+            setTimeout(() => wss.clients.forEach((client) => client.send(JSON.stringify(getData()))), 5000);
         });
     });
 
 }
 
 function renderPage(res) {
-    res.render('index.twig', {
+    res.render('index.twig', getData());
+}
+
+function getData() {
+    return {
         users: users,
         meetings: meetings,
         servers: servers.map((d) => d.name),
@@ -67,7 +78,7 @@ function renderPage(res) {
         alerts: alerts,
         cpu: (parseFloat(cpu) / (servers.length * 8)).toFixed(0),
         language: language
-    });
+    };
 }
 
 app.get('/', (req, res) => {
@@ -136,7 +147,7 @@ app.get('*', (req, res) => res.redirect("/"));
 
 app.post('*', (req, res) => res.redirect("/"));
 
-app.listen(port, () => {
+server.listen(port, () => {
     console.log(`App listening at http://localhost:${port}`)
 })
 

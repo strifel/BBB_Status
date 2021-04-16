@@ -99,4 +99,10 @@
         margin: 2rem;
     }
 </style>
+<script>
+window.socket = new WebSocket(((window.location.protocol === "https:") ? "wss://" : "ws://") + window.location.host + "/websocket");
+window.socket.onmessage = (event) => {
+    location.reload();
+}
+</script>
 </html>
