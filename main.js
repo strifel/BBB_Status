@@ -25,6 +25,7 @@ const language = process.env.BS_LANGUAGE ? JSON.parse(process.env.BS_LANGUAGE) :
 let users = 0;
 let meetings = 0;
 let cpu = 0.0;
+let cores = 0;
 let servers = [];
 let issues = [];
 let alerts = [];
@@ -43,16 +44,25 @@ function load() {
     ).then(res => res.json()).then((data) => {
         servers = [];
         cpu = 0;
+        cores = 0;
         alerts = [];
+        let startDate = new Date();
+        startDate = new Date(startDate - 1000 * 60 * 5);
+
         data['servers'].forEach((d) => {
             servers.push(d);
-            fetch('https://api.hetzner.cloud/v1/servers/' + d.id + '/metrics?type=cpu&start=' + new Date().toISOString() + '&end=' + new Date().toISOString(),
+            cores = parseInt(cores) + parseInt(d.server_type.cores);
+            fetch('https://api.hetzner.cloud/v1/servers/' + d.id + '/metrics?type=cpu&start=' + startDate.toISOString() + '&end=' + new Date().toISOString(),
                 {'headers':
                         {'Authorization': 'Bearer ' + hetznerToken}
                 }).then(res => res.json()).then((data) => {
-                    let serverCPU = data.metrics.time_series.cpu.values[0][1];
+                    let cpuArray = data.metrics.time_series.cpu.values;
+                    let serverCPU = cpuArray.reduce((a, b) => {
+                        if (a instanceof Array) a = a[1]
+                        return parseFloat(a) + parseFloat(b[1])
+                    }) / cpuArray.length;
                     cpu = parseFloat(cpu) + parseFloat(serverCPU);
-                    if (serverCPU > 700) {
+                    if (serverCPU > (90 * (d.server_type.cores))) {
                         alerts.push(highCPUAlert.replace("{{server}}", d.name))
                     }
             });
@@ -80,7 +90,7 @@ function getData() {
         serverCount: servers.length,
         issues: issues,
         alerts: alerts,
-        cpu: (parseFloat(cpu) / (servers.length * 8)).toFixed(0),
+        cpu: (parseFloat(cpu) / cores).toFixed(0),
         language: language
     };
 }
