@@ -23,6 +23,7 @@
                             <div class="control">
                                 <div class="select">
                                     <select name="server">
+                                        <option value="none">{{ language.chooseAServer }}</option>
                                         {% for server in servers %}
                                             <option>{{ server }}</option>
                                         {% endfor %}

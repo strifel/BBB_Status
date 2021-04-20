@@ -20,7 +20,7 @@ const statusToken = process.env.BS_STATUS_TOKEN;
 const zulipToken = process.env.BS_ZULIP_TOKEN;
 const slackIssueURI = process.env.BS_SLACK_ISSUE_URL;
 const highCPUAlert = process.env.BS_HIGH_CPU_ALERT || "{{server}} has a high CPU usage. If you experience problems on it, try recreating your Meeting.";
-const language = process.env.BS_LANGUAGE ? JSON.parse(process.env.BS_LANGUAGE) : {"report": "Report issue", "issue": "issue", "cancel": "cancel", "submit": "submit"};
+const language = process.env.BS_LANGUAGE ? JSON.parse(process.env.BS_LANGUAGE) : {"report": "Report issue", "issue": "issue", "cancel": "cancel", "submit": "submit", "chooseAServer": "Choose a Server"};
 
 let users = 0;
 let meetings = 0;
